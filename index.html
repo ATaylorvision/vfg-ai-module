@@ -11,200 +11,171 @@
     --gold:#c9a84c;--gold2:#e8c97a;
     --white:#ffffff;--gray:#f4f6f9;--gray2:#e2e8f0;
     --text:#1a2b4a;--muted:#5a7299;
-    --radius:12px;--shadow:0 2px 16px rgba(13,31,60,.12);
+    --radius:14px;--shadow:0 2px 20px rgba(13,31,60,.13);
   }
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray);color:var(--text);min-height:100vh;padding:0}
-  .module{max-width:960px;margin:0 auto;padding:20px 16px 32px}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray);color:var(--text);padding:16px}
 
-  /* Header */
-  .header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%);border-radius:var(--radius);padding:24px 28px;margin-bottom:20px;box-shadow:var(--shadow)}
-  .header-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px}
-  .header h1{font-size:clamp(1.25rem,3vw,1.7rem);font-weight:700;color:var(--white);line-height:1.2;margin-bottom:10px}
-  .header-intro{font-size:.9rem;color:#b8cae0;line-height:1.6;max-width:700px}
-  .header-intro strong{color:var(--white)}
+  .module{max-width:900px;margin:0 auto}
 
-  /* Progress */
-  .progress-bar-wrap{background:rgba(255,255,255,.1);border-radius:50px;height:5px;margin-top:16px;overflow:hidden}
-  .progress-bar-fill{height:100%;background:var(--gold);border-radius:50px;transition:width .4s ease;width:0%}
-  .progress-text{font-size:.8rem;color:var(--gold2);margin-top:6px}
+  /* Slim progress strip */
+  .progress-strip{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:0 2px}
+  .progress-label{font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+  .progress-track{flex:1;background:var(--gray2);border-radius:50px;height:6px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--gold);border-radius:50px;transition:width .4s ease;width:0%}
+  .progress-count{font-size:.75rem;color:var(--muted);font-weight:600;white-space:nowrap}
 
-  /* Layout */
-  .layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
-  @media(max-width:680px){.layout{grid-template-columns:1fr}}
+  /* Main card */
+  .main-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .layout{display:grid;grid-template-columns:1fr 1fr;min-height:520px}
+  @media(max-width:640px){.layout{grid-template-columns:1fr}}
 
-  /* Diagram */
-  .diagram-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 16px;position:relative}
-  .diagram-title{font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:center;margin-bottom:18px}
-  .diagram{position:relative;width:100%;aspect-ratio:1/1;max-width:320px;margin:0 auto}
+  /* Diagram side */
+  .diagram-side{background:linear-gradient(160deg,var(--navy) 0%,var(--navy3) 100%);padding:28px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+  .diagram-hint{font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.4);font-weight:600;margin-bottom:16px}
+  .diagram{position:relative;width:100%;max-width:300px;aspect-ratio:1/1}
+  .diagram svg.connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+
+  /* Center node */
   .center-node{
     position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    width:90px;height:90px;border-radius:50%;
-    background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%);
-    border:3px solid var(--gold);
+    width:96px;height:96px;border-radius:50%;
+    background:linear-gradient(135deg,#1a3a6e 0%,#0d1f3c 100%);
+    border:2.5px solid var(--gold);
     display:flex;align-items:center;justify-content:center;
     text-align:center;cursor:pointer;
-    box-shadow:0 4px 20px rgba(13,31,60,.25);
+    box-shadow:0 0 0 6px rgba(201,168,76,.12),0 4px 20px rgba(0,0,0,.3);
     transition:transform .2s,box-shadow .2s;
-    z-index:2;
-    color:var(--white);font-size:.7rem;font-weight:700;line-height:1.2;padding:6px;
+    z-index:3;color:var(--white);font-size:.68rem;font-weight:700;line-height:1.25;padding:8px;
+    border-style:solid;
   }
-  .center-node:hover,.center-node:focus{transform:translate(-50%,-50%) scale(1.06);box-shadow:0 6px 24px rgba(13,31,60,.35);outline:none}
-  .center-node.active{border-color:var(--gold2);box-shadow:0 0 0 4px rgba(201,168,76,.3),0 4px 20px rgba(13,31,60,.25)}
+  .center-node:hover,.center-node:focus{transform:translate(-50%,-50%) scale(1.07);outline:none;box-shadow:0 0 0 8px rgba(201,168,76,.2),0 6px 24px rgba(0,0,0,.35)}
+  .center-node.active{border-color:var(--gold2);box-shadow:0 0 0 8px rgba(201,168,76,.25),0 4px 20px rgba(0,0,0,.3)}
 
+  /* Spoke nodes */
   .spoke-node{
     position:absolute;width:72px;height:72px;border-radius:50%;
-    background:var(--white);border:2px solid var(--gray2);
+    background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);
+    backdrop-filter:blur(4px);
     display:flex;align-items:center;justify-content:center;flex-direction:column;
     text-align:center;cursor:pointer;
-    box-shadow:0 2px 10px rgba(13,31,60,.08);
-    transition:transform .2s,box-shadow .2s,border-color .2s,background .2s;
-    z-index:2;font-size:.65rem;font-weight:600;color:var(--navy);line-height:1.2;padding:4px;
+    transition:transform .2s,border-color .2s,background .2s,box-shadow .2s;
+    z-index:2;font-size:.6rem;font-weight:600;color:rgba(255,255,255,.85);line-height:1.2;padding:4px;
   }
-  .spoke-node:hover,.spoke-node:focus{transform:translate(-50%,-50%) scale(1.1);box-shadow:0 4px 16px rgba(13,31,60,.15);outline:2px solid var(--gold);outline-offset:2px}
-  .spoke-node.active{background:var(--navy);color:var(--white);border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.25),0 4px 16px rgba(13,31,60,.2)}
-  .spoke-node.viewed:not(.active){background:var(--gray);border-color:#b0c4d8;color:var(--navy)}
-  .spoke-node .check{display:none;font-size:.55rem;color:var(--gold);margin-top:2px;font-weight:700}
+  .spoke-node:hover,.spoke-node:focus{
+    transform:translate(-50%,-50%) scale(1.12) !important;
+    border-color:var(--gold);background:rgba(201,168,76,.15);
+    box-shadow:0 0 0 3px rgba(201,168,76,.2);outline:none;
+  }
+  .spoke-node.active{
+    background:var(--gold);border-color:var(--gold2);color:var(--navy);
+    box-shadow:0 0 0 4px rgba(201,168,76,.3),0 4px 16px rgba(0,0,0,.25);
+  }
+  .spoke-node.viewed:not(.active){
+    background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);color:var(--white);
+  }
+  .check{display:none;font-size:.5rem;margin-top:2px;opacity:.8}
   .spoke-node.viewed .check{display:block}
-  .spoke-node.active .check{color:var(--gold2)}
+  .spoke-node.active .check{display:none}
 
-  /* SVG connectors */
-  .diagram svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
-
-  /* Content Panel */
-  .content-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;min-height:340px;display:flex;flex-direction:column;gap:16px}
-  .content-inner{transition:opacity .25s ease;opacity:1}
+  /* Content side */
+  .content-side{padding:32px 28px;display:flex;flex-direction:column;justify-content:center;gap:18px}
+  .content-inner{transition:opacity .22s ease}
   .content-inner.fade{opacity:0}
-  .content-tag{display:inline-block;font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold);font-weight:700;background:rgba(201,168,76,.1);border-radius:4px;padding:3px 8px;margin-bottom:4px}
-  .content-title{font-size:1.25rem;font-weight:700;color:var(--navy);margin-bottom:2px}
-  .section{margin-bottom:14px}
-  .section-label{font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:6px}
-  .section-label::before{content:'';display:inline-block;width:12px;height:2px;background:var(--gold);border-radius:2px}
-  .section p{font-size:.875rem;color:var(--text);line-height:1.65}
-
-  /* Instruction hint */
-  .hint{font-size:.78rem;color:var(--muted);text-align:center;padding-top:8px;font-style:italic}
+  .content-tag{font-size:.68rem;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);font-weight:700;background:rgba(201,168,76,.1);border-radius:4px;padding:3px 8px;display:inline-block;margin-bottom:6px}
+  .content-title{font-size:1.3rem;font-weight:700;color:var(--navy);line-height:1.2;margin-bottom:14px}
+  .section{margin-bottom:12px}
+  .section-label{font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+  .section-label::before{content:'';display:inline-block;width:10px;height:2px;background:var(--gold);border-radius:2px}
+  .section p{font-size:.85rem;color:var(--text);line-height:1.65}
 
   /* Completion */
-  .completion{display:none;background:linear-gradient(135deg,#0d2240 0%,#1e3a6e 100%);border-radius:var(--radius);padding:22px 24px;margin-top:16px;box-shadow:var(--shadow)}
-  .completion.show{display:block;animation:fadeIn .5s ease}
-  .completion-icon{font-size:1.5rem;margin-bottom:8px}
-  .completion p{font-size:.9rem;color:#d0e4f7;line-height:1.6}
-  .completion strong{color:var(--gold2)}
-
-  /* Quiz */
-  .quiz{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-top:16px;display:none}
-  .quiz.show{display:block;animation:fadeIn .5s ease}
-  .quiz-header{font-size:.75rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px}
-  .quiz-q{font-size:.95rem;font-weight:600;color:var(--navy);margin-bottom:14px}
-  .quiz-opts{display:flex;flex-direction:column;gap:8px}
-  .quiz-opt{
-    background:var(--gray);border:2px solid transparent;border-radius:8px;
-    padding:10px 14px;font-size:.85rem;color:var(--text);cursor:pointer;
-    text-align:left;transition:border-color .2s,background .2s;font-weight:500;
+  .completion-strip{
+    display:none;background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%);
+    border-radius:0 0 var(--radius) var(--radius);
+    padding:16px 24px;border-top:1px solid rgba(201,168,76,.3);
   }
-  .quiz-opt:hover:not(:disabled){background:var(--gray2);border-color:var(--navy3)}
-  .quiz-opt:focus{outline:2px solid var(--gold);outline-offset:2px}
-  .quiz-opt.correct{background:#e8f5e9;border-color:#4caf50;color:#1b5e20}
-  .quiz-opt.wrong{background:#fdecea;border-color:#e53935;color:#7f1d1d}
-  .quiz-opt.dimmed{opacity:.45}
-  .quiz-feedback{margin-top:12px;font-size:.85rem;font-weight:600;line-height:1.5;display:none}
-  .quiz-feedback.correct{color:#2e7d32;display:block}
-  .quiz-feedback.wrong{color:#c62828;display:block}
+  .completion-strip.show{display:flex;align-items:center;gap:12px;animation:fadeUp .4s ease}
+  .completion-icon{font-size:1.2rem;flex-shrink:0}
+  .completion-strip p{font-size:.82rem;color:#c8dcf0;line-height:1.5}
+  .completion-strip strong{color:var(--gold2)}
 
-  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
 <div class="module" role="main">
 
-  <!-- Header -->
-  <div class="header">
-    <div class="header-label">AI Fundamentals · Vanderbilt Financial Group</div>
-    <h1>What Is AI? In Simple Terms</h1>
-    <p class="header-intro"><strong>What is AI in its simplest terms?</strong><br>
-    AI is technology that uses data to find patterns, support decisions, and automate certain tasks — always with the right human guidance.</p>
-    <div class="progress-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" aria-label="Module progress" id="progressBar">
-      <div class="progress-bar-fill" id="progressFill"></div>
+  <!-- Slim progress -->
+  <div class="progress-strip">
+    <span class="progress-label">Progress</span>
+    <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
     </div>
-    <div class="progress-text" id="progressText" aria-live="polite">0 of 5 explored</div>
+    <span class="progress-count" id="progressText" aria-live="polite">0 / 5</span>
   </div>
 
-  <!-- Layout -->
-  <div class="layout">
+  <!-- Main card -->
+  <div class="main-card">
+    <div class="layout">
 
-    <!-- Diagram -->
-    <div class="diagram-card">
-      <div class="diagram-title">Select a topic to explore</div>
-      <div class="diagram" id="diagram" aria-label="Interactive AI concept diagram">
-        <svg id="connectorSvg" aria-hidden="true"></svg>
+      <!-- Diagram -->
+      <div class="diagram-side">
+        <div class="diagram-hint">Select a topic to explore</div>
+        <div class="diagram" id="diagram" aria-label="Interactive AI concept diagram">
+          <svg class="connectors" id="connectorSvg" aria-hidden="true"></svg>
 
-        <!-- Center node -->
-        <button class="center-node" id="node-center" aria-label="Artificial Intelligence – overview" data-id="center" tabindex="0">
-          Artificial<br>Intelligence
-        </button>
+          <button class="center-node active" id="node-center" data-id="center" aria-label="Artificial Intelligence overview">
+            Artificial<br>Intelligence
+          </button>
 
-        <!-- Spoke nodes – positioned via JS -->
-        <button class="spoke-node" id="node-data" aria-label="Data – click to explore" data-id="data" tabindex="0">
-          <span>Data</span><span class="check" aria-hidden="true">✓ viewed</span>
-        </button>
-        <button class="spoke-node" id="node-patterns" aria-label="Patterns – click to explore" data-id="patterns" tabindex="0">
-          <span>Patterns</span><span class="check" aria-hidden="true">✓ viewed</span>
-        </button>
-        <button class="spoke-node" id="node-predictions" aria-label="Predictions – click to explore" data-id="predictions" tabindex="0">
-          <span>Predictions</span><span class="check" aria-hidden="true">✓ viewed</span>
-        </button>
-        <button class="spoke-node" id="node-automation" aria-label="Automation – click to explore" data-id="automation" tabindex="0">
-          <span>Automation</span><span class="check" aria-hidden="true">✓ viewed</span>
-        </button>
-        <button class="spoke-node" id="node-oversight" aria-label="Human Oversight – click to explore" data-id="oversight" tabindex="0">
-          <span>Human<br>Oversight</span><span class="check" aria-hidden="true">✓ viewed</span>
-        </button>
-      </div>
-      <p class="hint">Click any node to explore that concept</p>
-    </div>
-
-    <!-- Content Panel -->
-    <div class="content-card" id="contentCard" aria-live="polite" aria-atomic="true">
-      <div class="content-inner" id="contentInner">
-        <div class="content-tag" id="contentTag">Overview</div>
-        <div class="content-title" id="contentTitle">Artificial Intelligence</div>
-        <div class="section">
-          <div class="section-label">Definition</div>
-          <p id="contentDef">AI is a broad term for systems that can analyze information, recognize patterns, and support decisions or actions.</p>
-        </div>
-        <div class="section">
-          <div class="section-label">Finance Example</div>
-          <p id="contentEx">In financial services, AI can help identify trends, flag unusual activity, improve service experiences, and support more efficient workflows.</p>
-        </div>
-        <div class="section">
-          <div class="section-label">Why It Matters</div>
-          <p id="contentWhy">AI is most useful when it helps people work smarter, faster, and more consistently.</p>
+          <button class="spoke-node" id="node-data" data-id="data" aria-label="Data">
+            <span>Data</span><span class="check" aria-hidden="true">✓</span>
+          </button>
+          <button class="spoke-node" id="node-patterns" data-id="patterns" aria-label="Patterns">
+            <span>Patterns</span><span class="check" aria-hidden="true">✓</span>
+          </button>
+          <button class="spoke-node" id="node-predictions" data-id="predictions" aria-label="Predictions">
+            <span>Predictions</span><span class="check" aria-hidden="true">✓</span>
+          </button>
+          <button class="spoke-node" id="node-automation" data-id="automation" aria-label="Automation">
+            <span>Automation</span><span class="check" aria-hidden="true">✓</span>
+          </button>
+          <button class="spoke-node" id="node-oversight" data-id="oversight" aria-label="Human Oversight">
+            <span>Human<br>Oversight</span><span class="check" aria-hidden="true">✓</span>
+          </button>
         </div>
       </div>
+
+      <!-- Content -->
+      <div class="content-side">
+        <div class="content-inner" id="contentInner">
+          <div class="content-tag" id="contentTag">Overview</div>
+          <div class="content-title" id="contentTitle">Artificial Intelligence</div>
+          <div class="section">
+            <div class="section-label">Definition</div>
+            <p id="contentDef">AI is a broad term for systems that can analyze information, recognize patterns, and support decisions or actions.</p>
+          </div>
+          <div class="section">
+            <div class="section-label">Finance Example</div>
+            <p id="contentEx">In financial services, AI can help identify trends, flag unusual activity, improve service experiences, and support more efficient workflows.</p>
+          </div>
+          <div class="section">
+            <div class="section-label">Why It Matters</div>
+            <p id="contentWhy">AI is most useful when it helps people work smarter, faster, and more consistently.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end layout -->
+
+    <!-- Completion strip -->
+    <div class="completion-strip" id="completionBanner" role="status" aria-live="polite">
+      <div class="completion-icon">✦</div>
+      <p><strong>You've explored all five building blocks of AI.</strong> In financial services, AI works best when paired with human judgment, responsible use, and oversight.</p>
     </div>
+  </div><!-- end main-card -->
 
-  </div><!-- end layout -->
-
-  <!-- Completion Banner -->
-  <div class="completion" id="completionBanner" role="status" aria-live="polite">
-    <div class="completion-icon">✦</div>
-    <p><strong>You've explored the building blocks of AI.</strong><br>
-    In financial services, AI works best when paired with <strong>human judgment, responsible use, and oversight.</strong></p>
-  </div>
-
-  <!-- Knowledge Check -->
-  <div class="quiz" id="quizSection" aria-label="Knowledge check">
-    <div class="quiz-header">Knowledge Check</div>
-    <div class="quiz-q">Which of these best describes AI?</div>
-    <div class="quiz-opts" role="group" aria-label="Answer choices">
-      <button class="quiz-opt" data-correct="false" tabindex="0">A replacement for human judgment</button>
-      <button class="quiz-opt" data-correct="true" tabindex="0">A tool that uses data, patterns, and predictions to support decisions</button>
-      <button class="quiz-opt" data-correct="false" tabindex="0">A system that always makes perfect decisions</button>
-    </div>
-    <div class="quiz-feedback" id="quizFeedback"></div>
-  </div>
-
-</div><!-- end module -->
+</div>
 
 <script>
 const CONTENT = {
@@ -216,65 +187,58 @@ const CONTENT = {
   oversight:{tag:"Topic 5 of 5",title:"Human Oversight",def:"AI should support people, not replace human judgment.",ex:"Teams still review outputs, validate decisions, ensure compliance, and apply professional expertise.",why:"Responsible AI use depends on accountability, transparency, and human review."}
 };
 
-const SPOKE_IDS = ['data','patterns','predictions','automation','oversight'];
+const SPOKES = ['data','patterns','predictions','automation','oversight'];
 let activeId = 'center';
 let viewed = new Set();
 
-// Position spokes
 function positionSpokes(){
-  const diagram = document.getElementById('diagram');
-  const r = diagram.offsetWidth;
-  const cx = r/2, cy = r/2;
-  const radius = r * 0.36;
-  const startAngle = -90;
-  SPOKE_IDS.forEach((id,i)=>{
-    const angle = (startAngle + i*(360/SPOKE_IDS.length)) * Math.PI/180;
-    const nx = cx + radius*Math.cos(angle);
-    const ny = cy + radius*Math.sin(angle);
+  const d = document.getElementById('diagram');
+  const size = d.offsetWidth;
+  const cx = size/2, cy = size/2;
+  const radius = size * 0.355;
+  SPOKES.forEach((id,i)=>{
+    const angle = (-90 + i*(360/SPOKES.length)) * Math.PI/180;
     const el = document.getElementById('node-'+id);
-    el.style.left = nx+'px';
-    el.style.top = ny+'px';
+    el.style.left = (cx + radius*Math.cos(angle))+'px';
+    el.style.top  = (cy + radius*Math.sin(angle))+'px';
     el.style.transform = 'translate(-50%,-50%)';
     el.style.position = 'absolute';
   });
-  drawConnectors();
+  drawLines();
 }
 
-function drawConnectors(){
-  const diagram = document.getElementById('diagram');
-  const svg = document.getElementById('connectorSvg');
-  const r = diagram.offsetWidth;
-  const cx = r/2, cy = r/2;
-  const radius = r*0.36;
-  const startAngle = -90;
-  let lines = '';
-  SPOKE_IDS.forEach((id,i)=>{
-    const angle = (startAngle + i*(360/SPOKE_IDS.length))*Math.PI/180;
+function drawLines(){
+  const d = document.getElementById('diagram');
+  const size = d.offsetWidth;
+  const cx = size/2, cy = size/2;
+  const radius = size*0.355;
+  let html = '';
+  SPOKES.forEach((id,i)=>{
+    const angle = (-90 + i*(360/SPOKES.length))*Math.PI/180;
     const nx = cx + radius*Math.cos(angle);
     const ny = cy + radius*Math.sin(angle);
     const isActive = activeId===id;
     const isViewed = viewed.has(id);
-    const stroke = isActive ? '#c9a84c' : isViewed ? '#8caac8' : '#d0dae8';
+    const color = isActive ? '#e8c97a' : isViewed ? 'rgba(255,255,255,.35)' : 'rgba(255,255,255,.15)';
     const w = isActive ? 2 : 1.5;
-    lines += `<line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="${stroke}" stroke-width="${w}" stroke-dasharray="${isActive?'none':'4 3'}"/>`;
+    const dash = isActive ? '' : 'stroke-dasharray="5 4"';
+    html += `<line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="${color}" stroke-width="${w}" ${dash}/>`;
   });
-  svg.innerHTML = lines;
+  document.getElementById('connectorSvg').innerHTML = html;
 }
 
 function setActive(id){
-  // Remove active from old
-  document.getElementById('node-'+activeId) && document.getElementById('node-'+activeId).classList.remove('active');
+  document.getElementById('node-'+activeId)?.classList.remove('active');
   activeId = id;
-  document.getElementById('node-'+id) && document.getElementById('node-'+id).classList.add('active');
-  if(id!=='center') viewed.add(id);
-  // Update viewed styling
-  SPOKE_IDS.forEach(sid=>{
+  if(id !== 'center') viewed.add(id);
+
+  SPOKES.forEach(sid=>{
     const el = document.getElementById('node-'+sid);
-    if(viewed.has(sid)) el.classList.add('viewed'); else el.classList.remove('viewed');
-    if(sid===id) el.classList.add('active'); else el.classList.remove('active');
+    el.classList.toggle('active', sid===id);
+    el.classList.toggle('viewed', viewed.has(sid));
   });
   document.getElementById('node-center').classList.toggle('active', id==='center');
-  // Update content
+
   const c = CONTENT[id];
   const inner = document.getElementById('contentInner');
   inner.classList.add('fade');
@@ -286,59 +250,28 @@ function setActive(id){
     document.getElementById('contentWhy').textContent = c.why;
     inner.classList.remove('fade');
   },200);
-  // Progress
+
   const count = viewed.size;
-  document.getElementById('progressText').textContent = count+' of 5 explored';
-  const fill = document.getElementById('progressFill');
-  fill.style.width = (count/5*100)+'%';
-  document.getElementById('progressBar').setAttribute('aria-valuenow',count);
-  drawConnectors();
-  // Completion
-  if(count===5){
-    setTimeout(()=>{
-      document.getElementById('completionBanner').classList.add('show');
-      document.getElementById('quizSection').classList.add('show');
-    },400);
-  }
+  document.getElementById('progressFill').style.width = (count/5*100)+'%';
+  document.getElementById('progressText').textContent = count+' / 5';
+  document.getElementById('progressBar').setAttribute('aria-valuenow', count);
+
+  if(count===5) setTimeout(()=>document.getElementById('completionBanner').classList.add('show'),400);
+  drawLines();
 }
 
-// Attach events
+// Events
 document.getElementById('node-center').addEventListener('click',()=>setActive('center'));
 document.getElementById('node-center').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setActive('center');}});
-SPOKE_IDS.forEach(id=>{
+SPOKES.forEach(id=>{
   const el = document.getElementById('node-'+id);
   el.addEventListener('click',()=>setActive(id));
   el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setActive(id);}});
 });
 
-// Set default active
-document.getElementById('node-center').classList.add('active');
-
-// Quiz
-document.querySelectorAll('.quiz-opt').forEach(btn=>{
-  btn.addEventListener('click',function(){
-    if(this.disabled) return;
-    document.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;b.classList.add('dimmed');});
-    this.classList.remove('dimmed');
-    const fb = document.getElementById('quizFeedback');
-    if(this.dataset.correct==='true'){
-      this.classList.add('correct');
-      fb.className='quiz-feedback correct';
-      fb.textContent='✓ Correct! AI is a tool that works alongside human judgment — not a replacement for it.';
-    } else {
-      this.classList.add('wrong');
-      document.querySelectorAll('.quiz-opt').forEach(b=>{if(b.dataset.correct==='true') b.classList.add('correct');});
-      fb.className='quiz-feedback wrong';
-      fb.textContent='Not quite. AI supports decision-making — but it always requires human oversight and review.';
-    }
-  });
-  btn.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();btn.click();}});
-});
-
-// Responsive reposition
-window.addEventListener('resize',positionSpokes);
-window.addEventListener('load',positionSpokes);
-setTimeout(positionSpokes,100);
+window.addEventListener('resize', positionSpokes);
+window.addEventListener('load', positionSpokes);
+setTimeout(positionSpokes, 50);
 </script>
 </body>
 </html>
