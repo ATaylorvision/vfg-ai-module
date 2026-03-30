@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>What Is AI? | Vanderbilt Financial Group</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --navy:#0d1f3c;
+    --navy2:#162a4e;
+    --gold:#c9a84c;
+    --gold-light:#e2c97e;
+    --white:#fff;
+    --gray-bg:#f4f6f9;
+    --gray-border:#d8dee8;
+    --gray-text:#6b7a92;
+    --text:#1a2840;
+    --radius:12px;
+  }
+
+  html,body{
+    height:100%;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:var(--gray-bg);
+    color:var(--text);
+    overflow:hidden; /* single-screen, no page scroll */
+  }
+
+  /* ── Shell: fixed 820px tall, fluid wide ── */
+  .shell{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    max-width:1100px;
+    height:820px;
+    margin:0 auto;
+    padding:18px 20px 14px;
+    gap:12px;
+  }
+
+  /* ── Header (fixed height) ── */
+  .hd{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .hd-left{}
+  .brand-tag{
+    display:inline-block;
+    font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--gold);background:var(--navy);
+    padding:4px 10px;border-radius:20px;margin-bottom:5px;
+  }
+  .mod-title{font-size:1.2rem;font-weight:700;color:var(--navy);line-height:1.2}
+  .mod-sub{font-size:.78rem;color:var(--gray-text);margin-top:2px;line-height:1.4;max-width:480px}
+  /* Progress pill — top-right */
+  .prog-pill{
+    flex:0 0 auto;
+    text-align:right;
+  }
+  .prog-count{font-size:.72rem;font-weight:700;color:var(--gray-text);margin-bottom:5px;white-space:nowrap}
+  .prog-track{width:120px;height:5px;background:var(--gray-border);border-radius:10px;overflow:hidden;margin-left:auto}
+  .prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:10px;transition:width .4s ease;width:0}
+
+  /* ── Main row (diagram + content) ── */
+  .main-row{
+    flex:1 1 0;
+    min-height:0; /* critical for flex children not to overflow */
+    display:grid;
+    grid-template-columns:300px 1fr;
+    gap:14px;
+  }
+
+  /* ── Diagram panel ── */
+  .diag-panel{
+    background:var(--white);
+    border-radius:var(--radius);
+    box-shadow:0 2px 12px rgba(13,31,60,.09);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:16px 12px;
+    overflow:hidden;
+  }
+  .diag-area{position:relative;width:240px;height:240px;flex:0 0 auto}
+  .conn-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .conn-line{stroke:var(--gray-border);stroke-width:1.5;transition:stroke .3s}
+  .conn-line.active{stroke:var(--gold)}
+  .center-node{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:80px;height:80px;border-radius:50%;
+    background:var(--navy);color:var(--white);
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;font-size:.58rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    line-height:1.25;padding:8px;
+    box-shadow:0 0 0 3px var(--navy2),0 0 0 6px rgba(201,168,76,.22);
+    z-index:2;
+  }
+  .orbit-node{
+    position:absolute;width:60px;height:60px;border-radius:50%;
+    background:var(--white);border:2px solid var(--gray-border);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    cursor:pointer;gap:3px;padding:4px;
+    font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-text);
+    text-align:center;
+    transition:transform .18s,border-color .2s,box-shadow .2s,background .2s,color .2s;
+    z-index:2;outline:none;
+  }
+  .orbit-node:hover,.orbit-node:focus{
+    transform:translate(var(--bx),var(--by)) scale(1.12);
+    border-color:var(--gold-light);box-shadow:0 3px 14px rgba(201,168,76,.28);color:var(--navy);
+  }
+  .orbit-node.active{background:var(--navy);border-color:var(--gold);color:var(--white);box-shadow:0 3px 14px rgba(13,31,60,.22)}
+  .orbit-node.viewed:not(.active){border-color:var(--gold-light);background:rgba(201,168,76,.08);color:var(--navy)}
+  .orbit-node .n-icon{font-size:.95rem;line-height:1;pointer-events:none}
+  .orbit-node .n-lbl{font-size:.5rem;line-height:1.1;pointer-events:none}
+  .vbadge{
+    position:absolute;top:-3px;right:-3px;
+    width:14px;height:14px;border-radius:50%;
+    background:var(--gold);color:var(--navy);font-size:.48rem;font-weight:900;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;transition:opacity .25s;pointer-events:none;
+  }
+  .orbit-node.viewed .vbadge{opacity:1}
+  .diag-hint{font-size:.68rem;color:var(--gray-text);margin-top:12px;text-align:center}
+
+  /* ── Content panel ── */
+  .content-panel{
+    background:var(--white);
+    border-radius:var(--radius);
+    box-shadow:0 2px 12px rgba(13,31,60,.09);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .content-scroll{
+    flex:1 1 0;
+    overflow-y:auto;
+    padding:22px 22px 16px;
+  }
+  .content-scroll::-webkit-scrollbar{width:4px}
+  .content-scroll::-webkit-scrollbar-track{background:transparent}
+  .content-scroll::-webkit-scrollbar-thumb{background:var(--gray-border);border-radius:4px}
+  .c-inner{animation:fadeUp .28s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+  .c-eyebrow{font-size:.63rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+  .c-title{font-size:1.15rem;font-weight:700;color:var(--navy);margin-bottom:13px;line-height:1.25}
+  .c-block{margin-bottom:11px}
+  .c-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gray-text);margin-bottom:2px}
+  .c-text{font-size:.84rem;color:var(--text);line-height:1.65}
+  .c-div{height:1px;background:var(--gray-border);margin:12px 0}
+
+  /* ── Footer strip ── */
+  .footer-strip{
+    flex:0 0 auto;
+    min-height:0;
+  }
+
+  /* Completion banner */
+  .comp-banner{
+    display:none;
+    background:linear-gradient(135deg,var(--navy),var(--navy2));
+    color:var(--white);
+    border-radius:10px;
+    padding:12px 16px;
+    border-left:4px solid var(--gold);
+    animation:fadeUp .4s ease;
+  }
+  .comp-banner.show{display:flex;gap:12px;align-items:flex-start}
+  .comp-icon{font-size:1.1rem;flex:0 0 auto;margin-top:1px}
+  .comp-text-wrap{}
+  .comp-head{font-size:.78rem;font-weight:700;letter-spacing:.04em;margin-bottom:3px}
+  .comp-body{font-size:.75rem;color:rgba(255,255,255,.82);line-height:1.55}
+
+  /* Knowledge check */
+  .kc-wrap{
+    display:none;
+    background:var(--gray-bg);
+    border:1px solid var(--gray-border);
+    border-radius:10px;
+    padding:14px 16px;
+    margin-top:10px;
+    animation:fadeUp .35s ease;
+  }
+  .kc-wrap.show{display:block}
+  .kc-lbl{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:5px}
+  .kc-q{font-size:.82rem;font-weight:600;color:var(--navy);margin-bottom:10px;line-height:1.45}
+  .kc-opts{display:flex;gap:7px;flex-wrap:wrap}
+  .kc-opt{
+    flex:1 1 160px;
+    background:var(--white);border:1.5px solid var(--gray-border);border-radius:8px;
+    padding:9px 12px;font-size:.76rem;color:var(--text);cursor:pointer;
+    transition:border-color .2s,background .2s;text-align:left;outline:none;line-height:1.4;
+  }
+  .kc-opt:hover,.kc-opt:focus{border-color:var(--gold-light);background:rgba(201,168,76,.07)}
+  .kc-opt.correct{border-color:#2e7d32;background:rgba(46,125,50,.07);color:#1b5e20;font-weight:600}
+  .kc-opt.wrong{border-color:#c62828;background:rgba(198,40,40,.06);color:#b71c1c}
+  .kc-fb{margin-top:9px;font-size:.75rem;color:var(--gray-text);font-weight:600;display:none}
+  .kc-fb.show{display:block}
+
+  /* ── Mobile: stack ── */
+  @media(max-width:640px){
+    html,body{overflow:auto}
+    .shell{height:auto;overflow:visible;padding:14px 12px 20px}
+    .main-row{grid-template-columns:1fr;height:auto}
+    .diag-panel{padding:20px 12px}
+    .content-panel{min-height:360px}
+    .kc-opts{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ① Header -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="brand-tag">Vanderbilt Financial Group</div>
+      <div class="mod-title">What Is AI? In Simple Terms</div>
+      <div class="mod-sub">AI is technology that uses data to find patterns, support decisions, and automate certain tasks — always with the right human guidance.</div>
+    </div>
+    <div class="prog-pill">
+      <div class="prog-count" id="prog-count">0 of 5 explored</div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ② Main interaction -->
+  <div class="main-row">
+
+    <!-- Diagram -->
+    <div class="diag-panel">
+      <div class="diag-area" role="group" aria-label="AI concept diagram — select a node to explore">
+        <svg class="conn-svg" viewBox="0 0 240 240" aria-hidden="true">
+          <line id="ln0" class="conn-line" x1="120" y1="120" x2="120" y2="22"/>
+          <line id="ln1" class="conn-line" x1="120" y1="120" x2="213" y2="84"/>
+          <line id="ln2" class="conn-line" x1="120" y1="120" x2="192" y2="196"/>
+          <line id="ln3" class="conn-line" x1="120" y1="120" x2="48"  y2="196"/>
+          <line id="ln4" class="conn-line" x1="120" y1="120" x2="27"  y2="84"/>
+        </svg>
+        <div class="center-node" aria-hidden="true">Artificial<br>Intelligence</div>
+      </div>
+      <div class="diag-hint">Select any topic to explore</div>
+    </div>
+
+    <!-- ③ Content panel -->
+    <div class="content-panel" aria-live="polite" aria-atomic="true">
+      <div class="content-scroll">
+        <div class="c-inner" id="c-inner"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ④ Footer: completion + knowledge check -->
+  <div class="footer-strip">
+    <div class="comp-banner" id="comp-banner">
+      <div class="comp-icon">✓</div>
+      <div class="comp-text-wrap">
+        <div class="comp-head">Module Complete</div>
+        <div class="comp-body">You've explored the building blocks of AI. In financial services, AI works best when paired with human judgment, responsible use, and oversight.</div>
+      </div>
+    </div>
+    <div class="kc-wrap" id="kc-wrap">
+      <div class="kc-lbl">Knowledge Check</div>
+      <div class="kc-q">Which of these best describes AI?</div>
+      <div class="kc-opts">
+        <button class="kc-opt" data-i="0">A replacement for human judgment</button>
+        <button class="kc-opt" data-i="1">A tool that uses data, patterns, and predictions to support decisions</button>
+        <button class="kc-opt" data-i="2">A system that always makes perfect decisions</button>
+      </div>
+      <div class="kc-fb" id="kc-fb"></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const DATA = [
+  {label:'Data',       icon:'📊', short:'Data',
+   ey:'Building Block 1 of 5', title:'Data',
+   def:'AI learns from information. That information is called data.',
+   fin:'Data can include transaction history, market trends, account activity, customer interactions, or operational records.',
+   why:'The quality of AI depends on the quality of the data it uses.'},
+  {label:'Patterns',   icon:'🔍', short:'Patterns',
+   ey:'Building Block 2 of 5', title:'Patterns',
+   def:'AI looks for relationships, trends, and repeated signals in data.',
+   fin:'It may detect patterns in customer behavior, portfolio activity, or unusual transaction behavior.',
+   why:'Pattern recognition helps AI surface useful insights that may be hard to spot manually.'},
+  {label:'Predictions',icon:'📈', short:'Predictions',
+   ey:'Building Block 3 of 5', title:'Predictions',
+   def:'Based on patterns, AI can estimate what might happen next or what is most likely.',
+   fin:'AI may help forecast risk, identify possible fraud, or suggest likely customer needs.',
+   why:'Predictions can support faster, more informed decision-making.'},
+  {label:'Automation', icon:'⚙️', short:'Automation',
+   ey:'Building Block 4 of 5', title:'Automation',
+   def:'AI can help complete repetitive tasks more efficiently.',
+   fin:'It may assist with document classification, workflow routing, reporting support, or customer-service triage.',
+   why:'Automation saves time and allows teams to focus on higher-value work.'},
+  {label:'Human\nOversight',icon:'👤', short:'Human Oversight',
+   ey:'Building Block 5 of 5', title:'Human Oversight',
+   def:'AI should support people, not replace human judgment.',
+   fin:'Teams still review outputs, validate decisions, ensure compliance, and apply professional expertise.',
+   why:'Responsible AI use depends on accountability, transparency, and human review.'},
+];
+
+const DEFAULT = {
+  ey:'Overview', title:'Artificial Intelligence',
+  def:'AI is a broad term for systems that can analyze information, recognize patterns, and support decisions or actions.',
+  fin:'In financial services, AI can help identify trends, flag unusual activity, improve service experiences, and support more efficient workflows.',
+  why:'AI is most useful when it helps people work smarter, faster, and more consistently.'
+};
+
+// Node positions: top-center of 60px node within 240px canvas
+// cx,cy = center of node; node offset = -30 each
+// 0: top      (120, 22)  → top=-8,  left=90
+// 1: top-right(213, 84)  → top=54,  left=183
+// 2: bot-right(192,196)  → top=166, left=162
+// 3: bot-left ( 48,196)  → top=166, left=18
+// 4: top-left ( 27, 84)  → top=54,  left=-3
+const POS = [
+  {t:-8, l:90},
+  {t:54, l:183},
+  {t:166,l:162},
+  {t:166,l:18},
+  {t:54, l:-3},
+];
+// base translate for each so hover scale doesn't drift
+const BX = [0, 0, 0, 0, 0];
+const BY = [0, 0, 0, 0, 0];
+
+const area = document.querySelector('.diag-area');
+let active=null, viewed=new Set(), kcDone=false;
+
+DATA.forEach((d,i)=>{
+  const n = document.createElement('button');
+  n.className='orbit-node';
+  n.id='nd'+i;
+  n.setAttribute('aria-label', d.short+' — click to explore');
+  n.setAttribute('aria-pressed','false');
+  n.style.cssText=`top:${POS[i].t}px;left:${POS[i].l}px;--bx:0px;--by:0px;`;
+  n.innerHTML=`<span class="n-icon" aria-hidden="true">${d.icon}</span><span class="n-lbl">${d.label.replace('\n','<br>')}</span><span class="vbadge" aria-hidden="true">✓</span>`;
+  n.addEventListener('click',()=>pick(i));
+  n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(i);}});
+  area.appendChild(n);
+});
+
+function render(d){
+  const ci=document.getElementById('c-inner');
+  ci.innerHTML=`
+    <div class="c-eyebrow">${d.ey}</div>
+    <div class="c-title">${d.title}</div>
+    <div class="c-block"><div class="c-lbl">Definition</div><div class="c-text">${d.def}</div></div>
+    <div class="c-div"></div>
+    <div class="c-block"><div class="c-lbl">Finance Example</div><div class="c-text">${d.fin}</div></div>
+    <div class="c-div"></div>
+    <div class="c-block"><div class="c-lbl">Why It Matters</div><div class="c-text">${d.why}</div></div>
+  `;
+  ci.style.animation='none'; void ci.offsetWidth; ci.style.animation='';
+  document.querySelector('.content-scroll').scrollTop=0;
+}
+
+function pick(i){
+  if(active!==null){
+    document.getElementById('nd'+active).classList.remove('active');
+    document.getElementById('nd'+active).setAttribute('aria-pressed','false');
+    document.getElementById('ln'+active).classList.remove('active');
+  }
+  active=i; viewed.add(i);
+  const el=document.getElementById('nd'+i);
+  el.classList.add('active','viewed');
+  el.setAttribute('aria-pressed','true');
+  document.getElementById('ln'+i).classList.add('active');
+  render(DATA[i]);
+  const n=viewed.size;
+  document.getElementById('prog-count').textContent=n+' of 5 explored';
+  document.getElementById('prog-fill').style.width=(n/5*100)+'%';
+  if(n===5){
+    document.getElementById('comp-banner').classList.add('show');
+    document.getElementById('kc-wrap').classList.add('show');
+  }
+}
+
+document.querySelectorAll('.kc-opt').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(kcDone)return; kcDone=true;
+    const ok=parseInt(btn.dataset.i)===1;
+    document.querySelectorAll('.kc-opt').forEach(b=>b.disabled=true);
+    btn.classList.add(ok?'correct':'wrong');
+    if(!ok) document.querySelector('.kc-opt[data-i="1"]').classList.add('correct');
+    const fb=document.getElementById('kc-fb');
+    fb.textContent=ok
+      ?'✓ Correct! AI uses data, patterns, and predictions to support — not replace — human decisions.'
+      :'Not quite. The correct answer is: a tool that uses data, patterns, and predictions to support decisions.';
+    fb.classList.add('show');
+  });
+});
+
+render(DEFAULT);
+</script>
+</body>
+</html>
